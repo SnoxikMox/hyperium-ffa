@@ -1,19 +1,16 @@
 package com.snoxmox.hyperium.ffa.kit;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.snoxmox.hyperium.ffa.kit.item.KitItem;
-import eu.okaeri.configs.OkaeriConfig;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import org.bukkit.inventory.ItemStack;
 
-@JsonIgnoreProperties({
-        "bindFile", "configurer", "declaration", "headers", "updater",
-        "context", "internalState", "internalPath", "effectiveConfigurer",
-        "subconfig", "bindFileName"
-})public class Kit extends OkaeriConfig {
+public class Kit implements Serializable {
 
     private String name;
     private String displayName;
+    private ItemStack displayItem;
     private List<KitItem> items;
     private boolean build = true;
 
@@ -42,6 +39,14 @@ import java.util.List;
         return this.items;
     }
 
+    public void setDisplayItem(final ItemStack item) {
+        this.displayItem = item;
+    }
+
+    public ItemStack getDisplayItem() {
+        return this.displayItem;
+    }
+
     public void setItems(final List<KitItem> items) {
         this.items = items;
     }
@@ -53,4 +58,6 @@ import java.util.List;
     public void setBuild(final boolean build) {
         this.build = build;
     }
+
+
 }

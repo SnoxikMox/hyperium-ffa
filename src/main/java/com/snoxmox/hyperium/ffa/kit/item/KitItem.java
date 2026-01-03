@@ -1,14 +1,9 @@
 package com.snoxmox.hyperium.ffa.kit.item;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import eu.okaeri.configs.OkaeriConfig;
+import java.io.Serializable;
 import org.bukkit.inventory.ItemStack;
 
-@JsonIgnoreProperties({
-        "bindFile", "configurer", "declaration", "headers", "updater",
-        "context", "internalState", "internalPath", "effectiveConfigurer",
-        "subconfig", "bindFileName"
-})public class KitItem extends OkaeriConfig {
+public class KitItem implements Serializable {
 
     private int slot;
     private ItemStack item;

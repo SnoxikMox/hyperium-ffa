@@ -8,7 +8,6 @@ import com.snoxmox.hyperium.ffa.database.repository.AbstractRepository;
 import com.snoxmox.hyperium.ffa.database.repository.Identifiable;
 import java.util.concurrent.CompletableFuture;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class MySQLRepository<K, V extends Identifiable<K>> extends AbstractRepository<K, V> {

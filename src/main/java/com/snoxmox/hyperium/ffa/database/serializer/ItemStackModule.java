@@ -18,9 +18,7 @@ public class ItemStackModule extends SimpleModule {
         this.addDeserializer(ItemStack.class, new ItemStackDeserializer());
     }
 
-    /**
-     * Serializer: ItemStack -> Map -> JSON
-     */
+    
     private static class ItemStackSerializer extends JsonSerializer<ItemStack> {
         @Override
         public void serialize(final ItemStack item, final JsonGenerator gen, final SerializerProvider serializers) throws IOException {
@@ -29,10 +27,8 @@ public class ItemStackModule extends SimpleModule {
                 return;
             }
 
-            // Zamieniamy ItemStack na Mapę używając API Bukkita
             final Map<String, Object> serialized = item.serialize();
 
-            // Rekurencyjnie serializujemy mapę (żeby obsłużyć ItemMeta w środku)
             gen.writeStartObject();
             for (final Map.Entry<String, Object> entry : serialized.entrySet()) {
                 gen.writeFieldName(entry.getKey());
@@ -43,7 +39,7 @@ public class ItemStackModule extends SimpleModule {
 
         private void serializeObject(final Object value, final JsonGenerator gen) throws IOException {
             if (value instanceof final ConfigurationSerializable serializable) {
-                // Jeśli obiekt to np. ItemMeta, też go zamieniamy na mapę
+
                 final Map<String, Object> map = serializable.serialize();
                 gen.writeStartObject();
                 for (final Map.Entry<String, Object> entry : map.entrySet()) {
@@ -65,28 +61,25 @@ public class ItemStackModule extends SimpleModule {
                 }
                 gen.writeEndArray();
             } else {
-                // Proste typy (String, Integer, Boolean)
+
                 gen.writeObject(value);
             }
         }
     }
 
-    /**
-     * Deserializer: JSON -> Map -> ItemStack
-     */
+    
     private static class ItemStackDeserializer extends JsonDeserializer<ItemStack> {
         @Override
         public ItemStack deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
             final JsonNode node = p.getCodec().readTree(p);
 
-            // Jackson zamienia JSON na JsonNode, my musimy to zmienić na Map<String, Object>
-            // jaką rozumie Bukkit (musi mieć odpowiednie typy liczb!)
+
             final Map<String, Object> map = (Map<String, Object>) this.toJavaType(node);
 
             if (map == null) return null;
 
             try {
-                // Magia Bukkita - odtwarza item ze wszystkimi detalami
+
                 return ItemStack.deserialize(map);
             } catch (final Exception e) {
                 e.printStackTrace();
@@ -100,9 +93,9 @@ public class ItemStackModule extends SimpleModule {
                 node.fields().forEachRemaining(entry ->
                         map.put(entry.getKey(), this.toJavaType(entry.getValue()))
                 );
-                // Bardzo ważne: Bukkit wymaga specyficznego klucza dla serializacji
+
                 if (map.containsKey("==")) {
-                    // Tu nic nie musimy robić, ItemStack.deserialize to obsłuży
+
                 }
                 return map;
             } else if (node.isArray()) {
@@ -118,7 +111,7 @@ public class ItemStackModule extends SimpleModule {
             } else if (node.isBoolean()) {
                 return node.asBoolean();
             } else if (node.isLong()) {
-                return node.asLong(); // Bukkit czasem woli Int, ale Long jest bezpieczny
+                return node.asLong();
             } else if (node.isTextual()) {
                 return node.asText();
             }

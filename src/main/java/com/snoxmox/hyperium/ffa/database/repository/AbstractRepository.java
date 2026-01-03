@@ -11,7 +11,7 @@ public abstract class AbstractRepository<K, V extends Identifiable<K>> implement
     protected final ObjectMapper mapper;
     protected final Class<V> type;
 
-    public AbstractRepository(Class<V> type) {
+    public AbstractRepository(final Class<V> type) {
         this.type = type;
         this.mapper = new ObjectMapper();
         this.mapper.enable(SerializationFeature.INDENT_OUTPUT);

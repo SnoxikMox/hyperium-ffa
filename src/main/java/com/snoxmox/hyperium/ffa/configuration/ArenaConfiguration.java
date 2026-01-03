@@ -4,8 +4,11 @@ import com.snoxmox.hyperium.ffa.arena.Arena;
 import eu.okaeri.configs.OkaeriConfig;
 import java.util.ArrayList;
 import java.util.List;
+import org.bukkit.Location;
 
 public class ArenaConfiguration extends OkaeriConfig {
+
+    public Location globalSpawnLocation;
 
     private final List<Arena> arenas = new ArrayList<>();
 

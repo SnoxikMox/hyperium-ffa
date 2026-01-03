@@ -1,11 +1,11 @@
 package com.snoxmox.hyperium.ffa.user.stats;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Statistic {
+public class Statistic implements Serializable {
 
-    private final Map<String, Integer> pointsPerArena = new HashMap<>();
     private int kills = 0;
     private int deaths = 0;
     private int assists = 0;
@@ -21,10 +21,6 @@ public class Statistic {
 
     public void setKills(final int kills) {
         this.kills = kills;
-    }
-
-    public Map<String, Integer> getPointsPerArena() {
-        return this.pointsPerArena;
     }
 
     public int getKills() {

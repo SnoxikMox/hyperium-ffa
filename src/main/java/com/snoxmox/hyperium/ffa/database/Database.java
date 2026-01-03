@@ -1,5 +1,6 @@
 package com.snoxmox.hyperium.ffa.database;
 
+import com.snoxmox.hyperium.ffa.clan.Clan;
 import com.snoxmox.hyperium.ffa.configuration.DatabaseConfiguration;
 import com.snoxmox.hyperium.ffa.database.impl.FlatRepository;
 import com.snoxmox.hyperium.ffa.database.impl.MySQLRepository;
@@ -14,6 +15,7 @@ public class Database {
     private final Plugin plugin;
     private final DatabaseConfiguration configuration;
     private Repository<UUID, User> userRepository;
+    private Repository<String, Clan> clanRepository;
 
     public Database(final Plugin plugin, final DatabaseConfiguration configuration) {
         this.plugin = plugin;
@@ -28,12 +30,22 @@ public class Database {
                     new FlatRepository<>(User.class,  this.plugin.getDataPath() + "/users");
         };
         this.userRepository.init();
+
+        this.clanRepository = switch (this.configuration.type) {
+            case DatabaseConfiguration.DatabaseType.MYSQL -> new MySQLRepository<>(Clan.class, this.configuration, "clans");
+            case DatabaseConfiguration.DatabaseType.FLAT -> new FlatRepository<>(Clan.class, this.plugin.getDataPath() + "/clans");
+        };
+        this.clanRepository.init();
     }
 
     public void close() {
         if (this.userRepository != null) {
             this.userRepository.close();
         }
+    }
+
+    public Repository<String, Clan> getClanRepository() {
+        return this.clanRepository;
     }
 
     public Repository<UUID, User> getUserRepository() {

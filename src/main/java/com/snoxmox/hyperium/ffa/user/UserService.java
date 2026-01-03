@@ -24,12 +24,21 @@ public class UserService {
         if (cached != null) {
             return CompletableFuture.completedFuture(cached);
         }
-
         return this.repository.load(uuid).thenApply(loadedUser -> {
             final var user = (loadedUser != null) ? loadedUser : new User(uuid);
             this.userCache.put(uuid, user);
-            System.out.println("Loaded user: " + user.getUuid() + " from database, active users: " + this.userCache.size());
             return user;
+        });
+    }
+
+    private final ConcurrentHashMap<UUID, CompletableFuture<Void>> saving = new ConcurrentHashMap<>();
+    public CompletableFuture<Void> saveUserOnQuit(final UUID uuid) {
+        return this.saving.compute(uuid, (id, current) -> {
+            if (current != null && !current.isDone()) {
+                return current;
+            }
+            return this.saveUser(uuid)
+                    .whenComplete((_, _) -> this.saving.remove(id));
         });
     }
 
@@ -47,8 +56,8 @@ public class UserService {
         return this.repository.saveAll(currentUsers);
     }
 
-    public Optional<User> getUser(final UUID uuid) {
-        return Optional.ofNullable(this.userCache.get(uuid));
+    public User getUser(final UUID uuid) {
+        return Optional.ofNullable(this.userCache.get(uuid)).orElseGet(() -> this.loadUser(uuid).join());
     }
 
 }
